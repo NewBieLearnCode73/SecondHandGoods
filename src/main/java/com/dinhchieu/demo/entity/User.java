@@ -3,6 +3,7 @@ package com.dinhchieu.demo.entity;
 import com.dinhchieu.demo.utils.AccountState;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
 
@@ -15,13 +16,13 @@ public class User {
     @Column(name = "id")
     private int id;
 
-    @Column(name = "username")
+    @Column(name = "username", nullable = false)
     private String username;
 
-    @Column(name = "password")
+    @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "email")
+    @Column(name = "email", nullable = false)
     private String email;
 
     @Column(name = "phone")
@@ -34,6 +35,7 @@ public class User {
     private String address;
 
     @Column(name = "activation")
+    @Value("false")
     private Boolean activation;
 
     @Column(name = "activation_code")

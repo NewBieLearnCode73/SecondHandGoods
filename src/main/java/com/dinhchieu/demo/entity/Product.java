@@ -14,10 +14,10 @@ public class Product {
     @Column(name = "id")
     private int id;
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "quantity")
+    @Column(name = "quantity", nullable = false)
     private int quantity;
 
     @Column(name = "description")
