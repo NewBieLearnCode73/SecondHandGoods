@@ -9,7 +9,6 @@ import java.util.List;
 @Table(name = "type")
 @Data
 public class Type {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -18,8 +17,6 @@ public class Type {
     @Column(name = "type_name")
     private String typeName;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    @JoinTable(name = "product_type" , joinColumns = @JoinColumn(name = "type_id") , inverseJoinColumns = @JoinColumn(name ="product_id"))
+    @OneToMany(mappedBy = "type", fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private List<Product> productList;
-
 }
