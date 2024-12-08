@@ -32,7 +32,7 @@ public class Product {
     @Column(name = "rejection_reason")
     private String rejectionReason;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "review_id")
     private Review review;
 

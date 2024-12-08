@@ -5,17 +5,27 @@ import com.dinhchieu.demo.dao.TypeRepository;
 import com.dinhchieu.demo.dao.UserRepository;
 import com.dinhchieu.demo.dto.request.ProductRequestDTO;
 import com.dinhchieu.demo.dto.request.ProductStateUpdateRequestDTO;
-import com.dinhchieu.demo.entity.Product;
-import com.dinhchieu.demo.entity.State;
-import com.dinhchieu.demo.entity.Type;
-import com.dinhchieu.demo.entity.User;
+import com.dinhchieu.demo.dto.response.PaginationResponseDTO;
+import com.dinhchieu.demo.dto.response.ProductDetailResponseDTO;
+import com.dinhchieu.demo.entity.*;
+import com.dinhchieu.demo.handle.ProductNotFoundException;
+import com.dinhchieu.demo.handle.StateNotFoundException;
+import com.dinhchieu.demo.handle.TypeNotFoundException;
+import com.dinhchieu.demo.handle.UserNotFoundException;
 import com.dinhchieu.demo.service.ProductService;
 import jakarta.transaction.Transactional;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -31,52 +41,97 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private TypeRepository typeRepository;
 
-    @Autowired
-    private ModelMapper modelMapper;
+    private ProductDetailResponseDTO mapToProductDetailResponseDTO(Product product){
+        ProductDetailResponseDTO dto = new ProductDetailResponseDTO();
 
-    @Override
-    public List<Product> showAllProducts() {
-        return productRepository.findAll();
+        dto.setId(product.getId());
+        dto.setName(product.getName());
+        dto.setQuantity(product.getQuantity());
+        dto.setWarranty(product.getWarranty());
+        dto.setDescription(product.getDescription());
+        dto.setCreateAt(product.getCreateAt());
+
+        dto.setTypeName(product.getType().getTypeName());
+        dto.setOwnerUsername(product.getOwner().getUsername());
+
+        dto.setState(product.getState().getName());
+
+        if(product.getImageList() != null){
+            List<String> imageDataList = product.getImageList().stream()
+                    .limit(2) // get 2 images
+                    .map(Image::getData).toList();
+
+            dto.setImageDataList(imageDataList);
+        }
+
+        return dto;
     }
 
     @Override
-    public Optional<Product> getProductById(int id) throws Exception {
+    public PaginationResponseDTO<ProductDetailResponseDTO> showAllProducts(int pageNo, int pageSize, String sortBy) {
+
+        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+
+        Page<Product> pageResult = productRepository.findAll(paging);
+
+        List<ProductDetailResponseDTO> productDetailResponseDTOList = pageResult.stream().map(this::mapToProductDetailResponseDTO).toList();
+
+        PaginationResponseDTO<ProductDetailResponseDTO> response = new PaginationResponseDTO<>();
+        response.setItems(productDetailResponseDTOList);
+        response.setCurrentPage(pageResult.getNumber());
+        response.setTotalItems(pageResult.getTotalElements());
+        response.setTotalPages(pageResult.getTotalPages());
+        response.setPageSize(pageResult.getSize());
+
+        return response;
+    }
+
+    @Override
+    public Optional<ProductDetailResponseDTO> getProductById(int id) throws Exception {
         if(!productRepository.existsById(id)){
-            throw new Exception("Can't find product with id " + id);
+            throw new ProductNotFoundException("Can't find product with id " + id);
         }
 
-        return productRepository.findById(id);
+        Optional<Product> existingProduct = productRepository.findById(id);
+
+        return existingProduct.map(this::mapToProductDetailResponseDTO);
     }
 
     @Override
     @Transactional
-    public Product addProduct(ProductRequestDTO productRequestDTO) {
-        Product product = modelMapper.map(productRequestDTO, Product.class);
-
-        User existingUser = userRepository.findById(productRequestDTO.getUserId()).orElseThrow( () -> new RuntimeException("User not found!"));
-        Type existingType = typeRepository.findById(productRequestDTO.getTypeId()).orElseThrow( () -> new RuntimeException("Type with id " + productRequestDTO.getTypeId() + " not found!"));
-
-        product.setOwner(existingUser);
-        product.setType(existingType);
+    public ProductDetailResponseDTO addProduct(ProductRequestDTO productRequestDTO) {
+        Product product = new Product();
+        product.setName(productRequestDTO.getName());
+        product.setQuantity(productRequestDTO.getQuantity());
+        product.setDescription(productRequestDTO.getDescription());
+        product.setWarranty(productRequestDTO.getWarranty());
         product.setCreateAt(System.currentTimeMillis());
 
-        Optional<State> pendingState = Optional.ofNullable(stateRepository.findByName("PENDING"));
+        User existingUser = userRepository.findById(productRequestDTO.getUserId())
+                .orElseThrow(() -> new UserNotFoundException("User with ID " + productRequestDTO.getUserId() + " not found!"));
+        product.setOwner(existingUser);
 
-        if(pendingState.isEmpty()){
-            throw new RuntimeException("State 'PENDING' not found!");
-        }
-        else{
-            product.setState(pendingState.get());
-        }
+        Type existingType = typeRepository.findById(productRequestDTO.getTypeId())
+                .orElseThrow(() -> new TypeNotFoundException("Type with ID " + productRequestDTO.getTypeId() + " not found!"));
+        product.setType(existingType);
 
-        return productRepository.save(product);
+        State pendingState = stateRepository.findByName("PENDING");
+        if (pendingState == null) {
+            throw new StateNotFoundException("State 'PENDING' not found!");
+        }
+        product.setState(pendingState);
+
+        Product savedProduct = productRepository.save(product);
+
+        return mapToProductDetailResponseDTO(savedProduct);
     }
+
 
     @Override
     @Transactional
     public void removeProductById(int id)  throws Exception{
         if(!productRepository.existsById(id)){
-            throw new Exception("Can't find product with id " + id);
+            throw new ProductNotFoundException("Can't find product with id " + id);
         }
         else {
             productRepository.deleteById(id);
@@ -85,12 +140,12 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public Product updateProductById(int id, ProductRequestDTO productRequestDTO) throws Exception {
+    public ProductDetailResponseDTO updateProductById(int id, ProductRequestDTO productRequestDTO) throws Exception {
         Product existingProduct = productRepository.findById(id)
-                .orElseThrow(() -> new Exception("Can't find product with id " + id));
+                .orElseThrow(() -> new ProductNotFoundException("Can't find product with id " + id));
 
         Type existingType = typeRepository.findById(productRequestDTO.getTypeId())
-                        .orElseThrow(() -> new Exception("Can't find type with id " + productRequestDTO.getTypeId()));
+                        .orElseThrow(() -> new TypeNotFoundException("Can't find type with id " + productRequestDTO.getTypeId()));
 
         existingProduct.setName(productRequestDTO.getName());
         existingProduct.setQuantity(productRequestDTO.getQuantity());
@@ -98,17 +153,18 @@ public class ProductServiceImpl implements ProductService {
         existingProduct.setWarranty(productRequestDTO.getWarranty());
         existingProduct.setType(existingType);
 
-        return productRepository.save(existingProduct);
+        Product product = productRepository.save(existingProduct);
+        return mapToProductDetailResponseDTO(product);
     }
 
     @Override
     @Transactional
-    public Product changeStateOfProductBaseOnId(int id, ProductStateUpdateRequestDTO productStateUpdateRequestDTO) throws Exception {
+    public ProductDetailResponseDTO changeStateOfProductBaseOnId(int id, ProductStateUpdateRequestDTO productStateUpdateRequestDTO) throws Exception {
         Product existingProduct = productRepository.findById(id)
-                .orElseThrow(() -> new Exception("Can't find product with id " + id));
+                .orElseThrow(() -> new ProductNotFoundException("Can't find product with id " + id));
 
         State existingState = stateRepository.findById(productStateUpdateRequestDTO.getStateId())
-                .orElseThrow(() -> new Exception("Can't find state with id " + productStateUpdateRequestDTO.getStateId()));
+                .orElseThrow(() -> new StateNotFoundException("Can't find state with id " + productStateUpdateRequestDTO.getStateId()));
 
         if ("REJECTED".equalsIgnoreCase(existingState.getName())) {
             if (productStateUpdateRequestDTO.getRejectionReason() == null || productStateUpdateRequestDTO.getRejectionReason().isEmpty()) {
@@ -121,6 +177,8 @@ public class ProductServiceImpl implements ProductService {
 
         existingProduct.setState(existingState);
 
-        return productRepository.save(existingProduct);
+        Product product= productRepository.save(existingProduct);
+
+        return mapToProductDetailResponseDTO(product);
     }
 }

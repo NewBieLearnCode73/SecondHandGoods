@@ -21,13 +21,15 @@ public class Transaction {
     @Column(name = "fluctuation")
     private Double fluctuation;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "transaction_type")
-    private Enum<TransactionType> transactionType;
+    private TransactionType transactionType;
 
     @Column(name = "create_at")
     private String createAt;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private Enum<Status> status;
+    private Status status;
 
 }

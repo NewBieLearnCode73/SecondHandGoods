@@ -35,14 +35,14 @@ public class User {
     private String address;
 
     @Column(name = "activation")
-    @Value("false")
-    private Boolean activation;
+    private Boolean activation = false;
 
     @Column(name = "activation_code")
     private String activationCode;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "account_state")
-    private Enum<AccountState> accountState;
+    private AccountState accountState;
 
     @ManyToOne
     @JoinColumn(name = "role_id")

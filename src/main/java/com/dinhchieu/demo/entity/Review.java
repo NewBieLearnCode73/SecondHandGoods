@@ -12,7 +12,7 @@ public class Review {
     @Column(name = "id")
     private int id;
 
-    @Column(name = "seller_id" , nullable = false)
+    @Column(name = "seller_id", nullable = false)
     private int sellerId;
 
     @Column(name = "buyer_id", nullable = false)
@@ -21,12 +21,13 @@ public class Review {
     @Column(name = "rating")
     private int rating;
 
-    @Column(name = "commnent")
-    private String commnent;
+    @Column(name = "comment")
+    private String comment;
 
     @Column(name = "create_at")
     private Long createAt;
 
-    @OneToOne(mappedBy = "review")
+    @OneToOne
+    @JoinColumn(name = "product_id")
     private Product product;
 }
