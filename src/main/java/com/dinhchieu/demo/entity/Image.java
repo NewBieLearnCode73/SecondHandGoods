@@ -12,9 +12,6 @@ public class Image {
     @Column(name = "id")
     private int id;
 
-    @Column(name = "name")
-    private String name;
-
     @Lob
     @Column(name = "data", columnDefinition = "LONGTEXT")
     private String data;
