@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ImageService {
     public String uploadImage(ImageUploadRequestDTO imageUploadRequestDTO) throws Exception;
-    public void deleteImage(int imageId);
+    public void deleteImage(int imageId) throws Exception;
     public ImageResponseDTO getImageBaseOnId(int imageId);
     public String updateImage(int imageId, ImageUpdateDTO imageUpdateDTO) throws Exception;
 }

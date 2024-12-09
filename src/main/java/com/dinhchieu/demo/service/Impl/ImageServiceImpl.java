@@ -39,12 +39,12 @@ public class ImageServiceImpl implements ImageService {
 
         imageRepository.save(image);
 
-        return "Upload image for product with id"+ imageUploadRequestDTO.getProductId()  +" successfully";
+        return "Upload image for product with id "+ imageUploadRequestDTO.getProductId()  +" successfully";
     }
 
     @Override
-    public void deleteImage(int imageId) {
-        if(imageRepository.existsById(imageId)){
+    public void deleteImage(int imageId) throws Exception{
+        if(!imageRepository.existsById(imageId)){
             throw new ImageNotFoundException("Can't find image with id " + imageId);
         }
 

@@ -5,7 +5,6 @@ import com.dinhchieu.demo.dto.request.ProductStateUpdateRequestDTO;
 import com.dinhchieu.demo.dto.response.PaginationResponseDTO;
 import com.dinhchieu.demo.dto.response.ProductDetailResponseDTO;
 import com.dinhchieu.demo.service.ProductService;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
