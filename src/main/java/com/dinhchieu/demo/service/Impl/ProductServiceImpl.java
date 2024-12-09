@@ -13,6 +13,7 @@ import com.dinhchieu.demo.handle.StateNotFoundException;
 import com.dinhchieu.demo.handle.TypeNotFoundException;
 import com.dinhchieu.demo.handle.UserNotFoundException;
 import com.dinhchieu.demo.service.ProductService;
+import com.dinhchieu.demo.utils.Constants;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -55,8 +56,8 @@ public class ProductServiceImpl implements ProductService {
 
         if(product.getImageList() != null){
             List<String> imageDataList = product.getImageList().stream()
-                    .limit(2) // get 2 images
-                    .map(Image::getData).toList();
+                    .map(x -> Constants.BASE_URL + "/api/v1/images/" + x.getId())
+                    .toList();
 
             dto.setImageDataList(imageDataList);
         }
