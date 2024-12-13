@@ -3,7 +3,6 @@ package com.dinhchieu.demo.entity;
 import com.dinhchieu.demo.utils.AccountState;
 import jakarta.persistence.*;
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
 
@@ -56,8 +55,8 @@ public class User {
     private List<Product> wishList;
 
     @OneToMany(mappedBy = "follower", fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    private List<Follow> followers;
+    private List<Follow> followers; // Danh sách người đang theo dõi user này
 
     @OneToMany(mappedBy = "followee", fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    private List<Follow> followees;
+    private List<Follow> followees; // Danh sách người user này đang theo dõi
 }
