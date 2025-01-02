@@ -1,5 +1,6 @@
 package com.dinhchieu.demo.service.Impl;
 
+import com.dinhchieu.demo.dao.RoleRepository;
 import com.dinhchieu.demo.dao.UserRepository;
 import com.dinhchieu.demo.dto.request.UserRegisterRequestDTO;
 import com.dinhchieu.demo.dto.request.UserUpdateInformRequestDTO;
@@ -18,6 +19,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,6 +31,12 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     private UserInformationResponseDTO mapToUserInformationResponseDTO(User user){
         UserInformationResponseDTO dto = new UserInformationResponseDTO();
@@ -43,6 +52,24 @@ public class UserServiceImpl implements UserService {
         dto.setRoleName(user.getRole().getRoleName());
 
         return dto;
+    }
+
+    private void validateUserRegisterRequest(UserRegisterRequestDTO dto) {
+        if (dto.getUsername() == null || dto.getUsername().isEmpty()) {
+            throw new IllegalArgumentException("Username can't be null or empty");
+        }
+        if (dto.getEmail() == null || dto.getEmail().isEmpty()) {
+            throw new IllegalArgumentException("Email can't be null or empty");
+        }
+        if (dto.getPassword() == null || dto.getPassword().isEmpty()) {
+            throw new IllegalArgumentException("Password can't be null or empty");
+        }
+        if (dto.getPhone() == null || dto.getPhone().isEmpty()) {
+            throw new IllegalArgumentException("Phone can't be null or empty");
+        }
+        if (dto.getAddress() == null || dto.getAddress().isEmpty()) {
+            throw new IllegalArgumentException("Address can't be null or empty");
+        }
     }
 
     @Override
@@ -97,35 +124,74 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserInformationResponseDTO registerUser(UserRegisterRequestDTO userRegisterRequestDTO) {
-        return null;
+        validateUserRegisterRequest(userRegisterRequestDTO);
+
+        if (userRepository.findUserByUsername(userRegisterRequestDTO.getUsername()) != null) {
+            throw new UserNotFoundException("Username " + userRegisterRequestDTO.getUsername() + " is already existed!");
+        }
+
+        if (userRepository.findUserByEmail(userRegisterRequestDTO.getEmail()) != null) {
+            throw new UserNotFoundException("Email " + userRegisterRequestDTO.getEmail() + " is already existed!");
+        }
+
+        if (userRepository.findUserByPhone(userRegisterRequestDTO.getPhone()) != null) {
+            throw new UserNotFoundException("Phone " + userRegisterRequestDTO.getPhone() + " is already existed!");
+        }
+
+        User user = new User();
+        user.setUsername(userRegisterRequestDTO.getUsername());
+        user.setEmail(userRegisterRequestDTO.getEmail());
+        user.setPhone(userRegisterRequestDTO.getPhone());
+        user.setAddress(userRegisterRequestDTO.getAddress());
+        user.setPassword(passwordEncoder.encode(userRegisterRequestDTO.getPassword()));
+        user.setRole(roleRepository.findRoleByRoleName("USER"));
+        user.setAccountState(AccountState.PENDING);
+
+        userRepository.save(user);
+
+        return mapToUserInformationResponseDTO(user);
     }
 
     @Override
     public UserInformationResponseDTO updateBasicInformationUser(int userId, UserUpdateInformRequestDTO userUpdateInformRequestDTO) {
-         User existingUser = userRepository.findById(userId).orElseThrow( () -> new UserNotFoundException("User with id " + userId + " is not found"));
+        User existingUser = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User with id " + userId + " is not found"));
 
-         if(userUpdateInformRequestDTO.getEmail() != null){
-                existingUser.setEmail(userUpdateInformRequestDTO.getEmail());
-         }
+        if (userUpdateInformRequestDTO.getEmail() != null && !userUpdateInformRequestDTO.getEmail().isEmpty()) {
 
-         if(userUpdateInformRequestDTO.getPhone() != null){
-                existingUser.setPhone(userUpdateInformRequestDTO.getPhone());
-         }
+            if(userRepository.findUserByEmail(userUpdateInformRequestDTO.getEmail()) != null){
+                throw new UserNotFoundException("Email " + userUpdateInformRequestDTO.getEmail() + " is already existed!");
+            }
 
-         if(userUpdateInformRequestDTO.getAddress() != null){
-                existingUser.setAddress(userUpdateInformRequestDTO.getAddress());
-         }
+            existingUser.setEmail(userUpdateInformRequestDTO.getEmail());
+        }
 
-         userRepository.save(existingUser);
+        if (userUpdateInformRequestDTO.getPhone() != null && !userUpdateInformRequestDTO.getPhone().isEmpty()) {
 
-         return mapToUserInformationResponseDTO(existingUser);
+            if(userRepository.findUserByPhone(userUpdateInformRequestDTO.getPhone()) != null){
+                throw new UserNotFoundException("Phone " + userUpdateInformRequestDTO.getPhone() + " is already existed!");
+            }
+
+            existingUser.setPhone(userUpdateInformRequestDTO.getPhone());
+        }
+
+        if (userUpdateInformRequestDTO.getAddress() != null && !userUpdateInformRequestDTO.getAddress().isEmpty()) {
+            existingUser.setAddress(userUpdateInformRequestDTO.getAddress());
+        }
+
+        userRepository.save(existingUser);
+
+        return mapToUserInformationResponseDTO(existingUser);
     }
 
-    @Override
-    public UserInformationResponseDTO updateUserAccountState(int userId, AccountState accountState) {
 
-        if(accountState == null ){
-            throw new AccountStateNotFoundException("Account state can't be null");
+    @Override
+    public UserInformationResponseDTO updateUserAccountState(int userId, String accountState) {
+
+        try{
+           AccountState.valueOf(accountState);
+        }catch (IllegalArgumentException e){
+            throw new AccountStateNotFoundException("Account state " + accountState + " is not found");
         }
 
         Optional<User> user = userRepository.findById(userId);
@@ -134,32 +200,34 @@ public class UserServiceImpl implements UserService {
             throw new UserNotFoundException("User with id " + userId + " is not found");
         }
 
-
         User existingUser = user.get();
 
-        existingUser.setAccountState(accountState);
+        existingUser.setAccountState(AccountState.valueOf(accountState));
         userRepository.save(existingUser);
 
         return mapToUserInformationResponseDTO(existingUser);
     }
 
     @Override
-    public void updateUserPassword(int userId, String password) {
+    public void updateUserPassword(int userId, String oldPassword, String newPassword) {
         Optional<User> user = userRepository.findById(userId);
 
         if(user.isEmpty()){
             throw new UserNotFoundException("User with id " + userId + " is not found");
         }
 
-        if(password == null || password.isEmpty()){
-            throw new PasswordNotFoundException("Password can't be null or empty");
+        if((oldPassword == null || oldPassword.isEmpty()  )|| (newPassword == null || newPassword.isEmpty() )){
+            throw new PasswordNotFoundException("These passwords can't be null or empty");
         }
 
-//        if(password.equals())
+        if(!BCrypt.checkpw(oldPassword, user.get().getPassword())){
+            throw new PasswordNotFoundException("Please enter the correct old password");
+        }
 
         User existingUser = user.get();
 
-
+        existingUser.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(existingUser);
     }
 
     @Override

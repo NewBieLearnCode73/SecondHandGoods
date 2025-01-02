@@ -1,16 +1,16 @@
 package com.dinhchieu.demo.controller;
 
+import com.dinhchieu.demo.dto.request.AccountStateRequestDTO;
+import com.dinhchieu.demo.dto.request.UpdatePasswordRequestDTO;
+import com.dinhchieu.demo.dto.request.UserRegisterRequestDTO;
+import com.dinhchieu.demo.dto.request.UserUpdateInformRequestDTO;
 import com.dinhchieu.demo.dto.response.PaginationResponseDTO;
 import com.dinhchieu.demo.dto.response.UserInformationResponseDTO;
 import com.dinhchieu.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
@@ -44,4 +44,26 @@ public class UserController {
     public ResponseEntity<?> getUserByEmail(@PathVariable String email) {
         return ResponseEntity.status(HttpStatus.OK.value()).body(userService.getUserByEmail(email));
     }
+
+    @PostMapping("/api/v1/users/register")
+    public ResponseEntity<?> registerUser(@RequestBody UserRegisterRequestDTO userRegisterRequestDTO) {
+        return ResponseEntity.status(HttpStatus.CREATED.value()).body(userService.registerUser(userRegisterRequestDTO));
+    }
+
+    @PostMapping("/api/v1/users/updateInfo/{id}")
+    public ResponseEntity<?> updateBasicInformationUser(@PathVariable int id, @RequestBody UserUpdateInformRequestDTO userUpdateInformRequestDTO) {
+        return ResponseEntity.status(HttpStatus.OK.value()).body(userService.updateBasicInformationUser(id, userUpdateInformRequestDTO));
+    }
+
+    @PostMapping("/api/v1/users/updateAccountState/{id}")
+    public ResponseEntity<?> updateAccountStateUser(@PathVariable int id, @RequestBody AccountStateRequestDTO accountState) {
+        return ResponseEntity.status(HttpStatus.OK.value()).body(userService.updateUserAccountState(id, accountState.getAccountState()));
+    }
+
+    @PostMapping("/api/v1/users/updatePassword/{id}")
+    public ResponseEntity<?> updatePasswordUser(@PathVariable int id, @RequestBody UpdatePasswordRequestDTO passwords) {
+        userService.updateUserPassword(id, passwords.getOldPassword(), passwords.getNewPassword());
+        return ResponseEntity.status(HttpStatus.OK.value()).body("Update password successfully!");
+    }
+
 }

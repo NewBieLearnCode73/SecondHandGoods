@@ -4,7 +4,6 @@ import com.dinhchieu.demo.dto.request.UserRegisterRequestDTO;
 import com.dinhchieu.demo.dto.request.UserUpdateInformRequestDTO;
 import com.dinhchieu.demo.dto.response.PaginationResponseDTO;
 import com.dinhchieu.demo.dto.response.UserInformationResponseDTO;
-import com.dinhchieu.demo.utils.AccountState;
 
 import java.util.Map;
 
@@ -17,8 +16,8 @@ public interface UserService {
 
     UserInformationResponseDTO registerUser(UserRegisterRequestDTO userRegisterRequestDTO);
     UserInformationResponseDTO updateBasicInformationUser(int userId, UserUpdateInformRequestDTO userUpdateInformRequestDTO);
-    UserInformationResponseDTO updateUserAccountState(int userId, AccountState accountState);
-    void updateUserPassword(int userId, String password);
+    UserInformationResponseDTO updateUserAccountState(int userId, String accountState);
+    void updateUserPassword(int userId, String oldPassword, String newPassword);
 
 
     void addBalance(int userId, float balance);
