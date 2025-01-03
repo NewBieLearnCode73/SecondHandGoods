@@ -47,6 +47,7 @@ public class ProductServiceImpl implements ProductService {
         dto.setQuantity(product.getQuantity());
         dto.setWarranty(product.getWarranty());
         dto.setDescription(product.getDescription());
+        dto.setPrice(product.getPrice());
         dto.setCreateAt(product.getCreateAt());
 
         dto.setTypeName(product.getType().getTypeName());
@@ -102,6 +103,7 @@ public class ProductServiceImpl implements ProductService {
         product.setName(productRequestDTO.getName());
         product.setQuantity(productRequestDTO.getQuantity());
         product.setDescription(productRequestDTO.getDescription());
+        product.setPrice(productRequestDTO.getPrice());
         product.setWarranty(productRequestDTO.getWarranty());
         product.setCreateAt(System.currentTimeMillis());
 
@@ -148,6 +150,7 @@ public class ProductServiceImpl implements ProductService {
         existingProduct.setName(productRequestDTO.getName());
         existingProduct.setQuantity(productRequestDTO.getQuantity());
         existingProduct.setDescription(productRequestDTO.getDescription());
+        existingProduct.setPrice(productRequestDTO.getPrice());
         existingProduct.setWarranty(productRequestDTO.getWarranty());
         existingProduct.setType(existingType);
 

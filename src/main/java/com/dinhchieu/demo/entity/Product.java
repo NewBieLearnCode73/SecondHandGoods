@@ -23,6 +23,9 @@ public class Product {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "price", nullable = false)
+    private double price;
+
     @Column(name = "warranty")
     private String warranty;
 

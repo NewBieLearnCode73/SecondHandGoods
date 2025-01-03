@@ -11,5 +11,6 @@ public class ProductRequestDTO {
     private String name;
     private int quantity;
     private String description;
+    private double price;
     private String warranty;
 }
