@@ -10,6 +10,7 @@ import com.dinhchieu.demo.entity.Product;
 import com.dinhchieu.demo.handle.ImageNotFoundException;
 import com.dinhchieu.demo.handle.ProductNotFoundException;
 import com.dinhchieu.demo.service.ImageService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,7 @@ public class ImageServiceImpl implements ImageService {
 
 
     @Override
+    @Transactional
     public String uploadImage(ImageUploadRequestDTO imageUploadRequestDTO) throws Exception {
         Product existingProduct = productRepository.findById(imageUploadRequestDTO.getProductId())
                 .orElseThrow(() -> new ProductNotFoundException("Can't find product with id " + imageUploadRequestDTO.getProductId()));
@@ -43,6 +45,7 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
+    @Transactional
     public void deleteImage(int imageId) throws Exception{
         if(!imageRepository.existsById(imageId)){
             throw new ImageNotFoundException("Can't find image with id " + imageId);
@@ -67,6 +70,7 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
+    @Transactional
     public String updateImage(int imageId, ImageUpdateDTO imageUpdateDTO) throws Exception {
         Optional<Image> image = imageRepository.findById(imageId);
 

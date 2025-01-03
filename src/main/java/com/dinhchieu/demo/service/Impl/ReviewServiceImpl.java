@@ -13,6 +13,7 @@ import com.dinhchieu.demo.handle.ProductNotFoundException;
 import com.dinhchieu.demo.handle.ReviewNotFoundException;
 import com.dinhchieu.demo.handle.UserNotFoundException;
 import com.dinhchieu.demo.service.ReviewService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,6 +44,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
+    @Transactional
     public ReviewResponseDTO addReview(ReviewRequestDTO reviewRequestDTO) {
         Optional<Product> product = productRepository.findById(reviewRequestDTO.getProductId());
         Optional<User> user = userRepository.findById(reviewRequestDTO.getBuyerId());
@@ -77,6 +79,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
+    @Transactional
     public void removeReview(int reviewId) {
         Optional<Review> review = reviewRepository.findById(reviewId);
         if(review.isEmpty()){
@@ -87,6 +90,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
+    @Transactional
     public ReviewResponseDTO updateReview(int reviewId, ReviewUpdateRequestDTO reviewUpdateRequestDTO) {
 
        Optional<Review> review = reviewRepository.findById(reviewId);

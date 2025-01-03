@@ -8,6 +8,7 @@ import com.dinhchieu.demo.entity.User;
 import com.dinhchieu.demo.handle.ProductNotFoundException;
 import com.dinhchieu.demo.handle.UserNotFoundException;
 import com.dinhchieu.demo.service.WishListService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +33,7 @@ public class WishListServiceImpl implements WishListService {
     }
 
     @Override
+    @Transactional
     public void addProductToWishList(int userId, int productId) {
         Optional<User> user = userRepository.findById(userId);
         if (user.isEmpty()) {
@@ -52,6 +54,7 @@ public class WishListServiceImpl implements WishListService {
     }
 
     @Override
+    @Transactional
     public void removeProductFromWishList(int userId, int productId) {
         Optional<User> user = userRepository.findById(userId);
         if (user.isEmpty()) {

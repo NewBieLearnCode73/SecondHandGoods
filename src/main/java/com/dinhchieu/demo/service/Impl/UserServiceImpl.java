@@ -13,6 +13,7 @@ import com.dinhchieu.demo.handle.UserNotFoundException;
 import com.dinhchieu.demo.service.UserService;
 import com.dinhchieu.demo.utils.AccountState;
 import com.dinhchieu.demo.utils.UserSpecification;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -123,6 +124,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserInformationResponseDTO registerUser(UserRegisterRequestDTO userRegisterRequestDTO) {
         validateUserRegisterRequest(userRegisterRequestDTO);
 
@@ -153,6 +155,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserInformationResponseDTO updateBasicInformationUser(int userId, UserUpdateInformRequestDTO userUpdateInformRequestDTO) {
         User existingUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User with id " + userId + " is not found"));
@@ -186,6 +189,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
+    @Transactional
     public UserInformationResponseDTO updateUserAccountState(int userId, String accountState) {
 
         try{
@@ -209,6 +213,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void updateUserPassword(int userId, String oldPassword, String newPassword) {
         Optional<User> user = userRepository.findById(userId);
 
@@ -231,6 +236,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void addBalance(int userId, float balance) {
         Optional<User> user = userRepository.findById(userId);
 
@@ -245,6 +251,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void subtractBalance(int userId, float balance) {
         Optional<User> user = userRepository.findById(userId);
 
