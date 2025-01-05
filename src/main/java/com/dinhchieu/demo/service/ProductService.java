@@ -8,6 +8,7 @@ import java.util.Optional;
 
 public interface ProductService {
     public PaginationResponseDTO<ProductDetailResponseDTO> showAllProducts(int pageNo, int pageSize, String sortBy);
+    public PaginationResponseDTO<ProductDetailResponseDTO> showAllProductsByUserId(int userId, int pageNo, int pageSize, String sortBy);
     public Optional<ProductDetailResponseDTO> getProductById(int id) throws Exception;
     public ProductDetailResponseDTO addProduct(ProductRequestDTO productRequestDTO);
     public void removeProductById(int id) throws Exception;

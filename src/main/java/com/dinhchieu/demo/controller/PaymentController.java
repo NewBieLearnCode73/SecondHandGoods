@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class PaymentController {
     @Autowired
-    private  PaymentService paymentService;
+    private PaymentService paymentService;
 
     @PostMapping("/api/v1/payment/vn-pay")
     public ResponseEntity<?> pay(@RequestBody PaymentRequestDTO paymentRequestDTO, HttpServletRequest request){

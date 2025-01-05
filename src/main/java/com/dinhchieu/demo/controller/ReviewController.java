@@ -14,6 +14,11 @@ public class ReviewController {
     @Autowired
     private ReviewService reviewService;
 
+    @GetMapping("/api/v1/reviews/product/{productId}")
+    public ResponseEntity<?> getReviewByProductId(@PathVariable int productId) {
+        return ResponseEntity.status(HttpStatus.OK.value()).body(reviewService.getReviewByProductId(productId));
+    }
+
     @GetMapping("/api/v1/reviews/{id}")
     public ResponseEntity<?> getReviewById(@PathVariable int id) {
         return ResponseEntity.status(HttpStatus.OK.value()).body(reviewService.getReviewById(id));
@@ -33,10 +38,5 @@ public class ReviewController {
     @PutMapping("/api/v1/reviews/{id}")
     public ResponseEntity<?> updateReview(@PathVariable int id, @RequestBody ReviewUpdateRequestDTO reviewUpdateRequestDTO) {
         return ResponseEntity.status(HttpStatus.OK.value()).body(reviewService.updateReview(id, reviewUpdateRequestDTO ));
-    }
-
-    @GetMapping("/api/v1/reviews/product/{productId}")
-    public ResponseEntity<?> getReviewByProductId(@PathVariable int productId) {
-        return ResponseEntity.status(HttpStatus.OK.value()).body(reviewService.getReviewByProductId(productId));
     }
 }

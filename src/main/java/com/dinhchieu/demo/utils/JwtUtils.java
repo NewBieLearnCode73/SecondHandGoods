@@ -23,8 +23,6 @@ public class JwtUtils {
     public String generateToken(UserDetails userDetails){
         Map<String, String> claims = new HashMap<>();
 
-        claims.put("iss", Constants.ISS);
-
         return Jwts
                 .builder()
                 .claims(claims)
