@@ -1,8 +1,10 @@
 package com.dinhchieu.demo.service.Impl;
 
 import com.dinhchieu.demo.config.VNPayConfig;
+import com.dinhchieu.demo.dto.request.PaymentRequestDTO;
 import com.dinhchieu.demo.dto.response.PaymentResponseDTO;
 import com.dinhchieu.demo.service.PaymentService;
+import com.dinhchieu.demo.service.UserService;
 import com.dinhchieu.demo.utils.VNPayUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +18,21 @@ public class PaymentServiceImpl implements PaymentService {
     @Autowired
     private VNPayConfig vnpayConfig;
 
+    @Autowired
+    private UserService userService;
+
     @Override
-    public PaymentResponseDTO createPayment(HttpServletRequest request) {
-        long amount = Integer.parseInt(request.getParameter("amount")) * 100L;
-        String bankCode = request.getParameter("bankCode");
+    public PaymentResponseDTO createPayment(PaymentRequestDTO paymentRequestDTO , HttpServletRequest request) {
+        long amount = paymentRequestDTO.getAmount() * 100;
+        String bankCode = paymentRequestDTO.getBankCode();
+        int userId = paymentRequestDTO.getUserId();
+
+        if (userService.getUserById(userId) == null || userId <= 0) {
+            return new PaymentResponseDTO("99", "User not found!", null);
+        }
+
         Map<String, String> vnpParamsMap = vnpayConfig.getVNPayConfig();
+//        vnpParamsMap.put("vnp_UserID", String.valueOf(userId));
         vnpParamsMap.put("vnp_Amount", String.valueOf(amount));
         if (bankCode != null && !bankCode.isEmpty()) {
             vnpParamsMap.put("vnp_BankCode", bankCode);
@@ -32,7 +44,6 @@ public class PaymentServiceImpl implements PaymentService {
         String vnpSecureHash = VNPayUtil.hmacSHA512(vnpayConfig.getSecretKey(), hashData);
         queryUrl += "&vnp_SecureHash=" + vnpSecureHash;
         String paymentUrl = vnpayConfig.getVnp_PayUrl() + "?" + queryUrl;
-        System.out.println(paymentUrl);
         return new PaymentResponseDTO("00", "Success" , paymentUrl);
     }
 }
