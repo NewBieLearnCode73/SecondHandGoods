@@ -19,4 +19,13 @@ public class Endpoints {
             "/api/v1/reviews/**",
             "/api/v1/reviews/product/**",
     };
+
+
+//    ENDPOINT FOR USER
+    public static final String[] USER_GET_ENDPOINTS = {
+            "/api/v1/wishList/**",
+            "/api/v1/followers/**",
+            "/api/v1/followees/**",
+    };
+
 }

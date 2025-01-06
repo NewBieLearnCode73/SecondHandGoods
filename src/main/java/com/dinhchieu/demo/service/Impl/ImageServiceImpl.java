@@ -88,5 +88,12 @@ public class ImageServiceImpl implements ImageService {
         return "Update image with id " + imageId + " successfully";
     }
 
+    @Override
+    public void deleteImagesBaseOnProductId(int productId) throws Exception {
+        if(!productRepository.existsById(productId)){
+            throw new ProductNotFoundException("Can't find product with id " + productId);
+        }
 
+        imageRepository.deleteImagesByProduct_Id(productId);
+    }
 }

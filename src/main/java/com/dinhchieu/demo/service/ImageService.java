@@ -7,8 +7,9 @@ import com.dinhchieu.demo.dto.response.ImageResponseDTO;
 import java.util.List;
 
 public interface ImageService {
-    public String uploadImage(ImageUploadRequestDTO imageUploadRequestDTO) throws Exception;
-    public void deleteImage(int imageId) throws Exception;
-    public ImageResponseDTO getImageBaseOnId(int imageId);
-    public String updateImage(int imageId, ImageUpdateDTO imageUpdateDTO) throws Exception;
+    String uploadImage(ImageUploadRequestDTO imageUploadRequestDTO) throws Exception;
+    void deleteImage(int imageId) throws Exception;
+    ImageResponseDTO getImageBaseOnId(int imageId);
+    String updateImage(int imageId, ImageUpdateDTO imageUpdateDTO) throws Exception;
+    void deleteImagesBaseOnProductId(int productId) throws Exception;
 }

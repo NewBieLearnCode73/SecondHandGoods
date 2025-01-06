@@ -4,6 +4,7 @@ import com.dinhchieu.demo.dto.request.ProductRequestDTO;
 import com.dinhchieu.demo.dto.request.ProductStateUpdateRequestDTO;
 import com.dinhchieu.demo.dto.response.PaginationResponseDTO;
 import com.dinhchieu.demo.dto.response.ProductDetailResponseDTO;
+import com.dinhchieu.demo.service.ImageService;
 import com.dinhchieu.demo.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,9 @@ import java.util.Optional;
 public class ProductController {
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private ImageService imageService;
 
     @GetMapping("/api/v1/products")
     public ResponseEntity<?> showAllProducts(
@@ -52,6 +56,7 @@ public class ProductController {
 
     @DeleteMapping("/api/v1/products/{id}")
     public ResponseEntity<?> removeProductById(@PathVariable int id) throws Exception {
+        imageService.deleteImagesBaseOnProductId(id);
         productService.removeProductById(id);
         return ResponseEntity.status(HttpStatus.OK.value()).body("Xóa sẳn phẩm với id " + id + " thành công");
     }
