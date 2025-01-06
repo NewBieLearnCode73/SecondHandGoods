@@ -58,16 +58,16 @@ public class ProductController {
     public ResponseEntity<?> removeProductById(@PathVariable int id) throws Exception {
         imageService.deleteImagesBaseOnProductId(id);
         productService.removeProductById(id);
-        return ResponseEntity.status(HttpStatus.OK.value()).body("Xóa sẳn phẩm với id " + id + " thành công");
+        return ResponseEntity.status(HttpStatus.OK.value()).body("Delete product with " + id + " successfully");
     }
 
-    @PutMapping("/api/v1/products/{id}")
+    @PatchMapping("/api/v1/products/{id}")
     public ResponseEntity<?> updateProductById(@PathVariable int id, @RequestBody ProductRequestDTO productRequestDTO) throws Exception {
         ProductDetailResponseDTO productDetailResponseDTO = productService.updateProductById(id, productRequestDTO);
         return ResponseEntity.status(HttpStatus.OK.value()).body(productDetailResponseDTO);
     }
 
-    @PatchMapping("/api/v1/products/{id}/state")
+    @PatchMapping("/api/v1/products/state/{id}")
     public ResponseEntity<?> changeStateOfProductBaseOnId(@PathVariable int id, @RequestBody ProductStateUpdateRequestDTO productStateUpdateRequestDTO) throws Exception {
         ProductDetailResponseDTO productDetailResponseDTO = productService.changeStateOfProductBaseOnId(id, productStateUpdateRequestDTO);
         return ResponseEntity.status(HttpStatus.OK.value()).body(productDetailResponseDTO);

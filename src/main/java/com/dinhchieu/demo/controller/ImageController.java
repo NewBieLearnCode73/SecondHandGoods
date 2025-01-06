@@ -12,15 +12,15 @@ public class ImageController {
     @Autowired
     private ImageService imageService;
 
+    @GetMapping("/api/v1/images/{id}")
+    public ResponseEntity<?> getImageBaseOnId(@PathVariable int id) {
+        return ResponseEntity.status(HttpStatus.OK).body(imageService.getImageBaseOnId(id));
+    }
+
     @PostMapping("/api/v1/images")
     public ResponseEntity<?> uploadImage(@RequestBody ImageUploadRequestDTO imageUploadRequestDTO) throws Exception {
         String response = imageService.uploadImage(imageUploadRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
-
-    @GetMapping("/api/v1/images/{id}")
-    public ResponseEntity<?> getImageBaseOnId(@PathVariable int id) {
-        return ResponseEntity.status(HttpStatus.OK).body(imageService.getImageBaseOnId(id));
     }
 
     @DeleteMapping("/api/v1/images/{id}")
@@ -29,7 +29,7 @@ public class ImageController {
         return ResponseEntity.status(HttpStatus.OK).body("Delete image with id " + id + " successfully");
     }
 
-    @PutMapping("/api/v1/images/{id}")
+    @PatchMapping("/api/v1/images/{id}")
     public ResponseEntity<?> updateImage(@PathVariable int id, @RequestBody ImageUpdateDTO imageUpdateDTO) throws Exception {
         String response = imageService.updateImage(id, imageUpdateDTO);
         return ResponseEntity.status(HttpStatus.OK).body(response);

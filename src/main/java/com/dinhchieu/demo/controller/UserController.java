@@ -50,17 +50,17 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED.value()).body(userService.registerUser(userRegisterRequestDTO));
     }
 
-    @PostMapping("/api/v1/users/updateInfo/{id}")
+    @PatchMapping("/api/v1/users/updateProfile/{id}")
     public ResponseEntity<?> updateBasicInformationUser(@PathVariable int id, @RequestBody UserUpdateInformRequestDTO userUpdateInformRequestDTO) {
         return ResponseEntity.status(HttpStatus.OK.value()).body(userService.updateBasicInformationUser(id, userUpdateInformRequestDTO));
     }
 
-    @PostMapping("/api/v1/users/updateAccountState/{id}")
+    @PatchMapping("/api/v1/users/updateAccountState/{id}")
     public ResponseEntity<?> updateAccountStateUser(@PathVariable int id, @RequestBody AccountStateRequestDTO accountState) {
         return ResponseEntity.status(HttpStatus.OK.value()).body(userService.updateUserAccountState(id, accountState.getAccountState()));
     }
 
-    @PostMapping("/api/v1/users/updatePassword/{id}")
+    @PatchMapping("/api/v1/users/updatePassword/{id}")
     public ResponseEntity<?> updatePasswordUser(@PathVariable int id, @RequestBody UpdatePasswordRequestDTO passwords) {
         userService.updateUserPassword(id, passwords.getOldPassword(), passwords.getNewPassword());
         return ResponseEntity.status(HttpStatus.OK.value()).body("Update password successfully!");

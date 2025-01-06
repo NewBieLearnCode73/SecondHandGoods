@@ -35,7 +35,7 @@ public class ReviewController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Review with id " + id + " is deleted!");
     }
 
-    @PutMapping("/api/v1/reviews/{id}")
+    @PatchMapping("/api/v1/reviews/{id}")
     public ResponseEntity<?> updateReview(@PathVariable int id, @RequestBody ReviewUpdateRequestDTO reviewUpdateRequestDTO) {
         return ResponseEntity.status(HttpStatus.OK.value()).body(reviewService.updateReview(id, reviewUpdateRequestDTO ));
     }
