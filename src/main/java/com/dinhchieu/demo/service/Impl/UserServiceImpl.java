@@ -146,6 +146,7 @@ public class UserServiceImpl implements UserService {
         user.setPhone(userRegisterRequestDTO.getPhone());
         user.setAddress(userRegisterRequestDTO.getAddress());
         user.setPassword(passwordEncoder.encode(userRegisterRequestDTO.getPassword()));
+        user.setBalance((float) 0);
         user.setRole(roleRepository.findRoleByRoleName("USER"));
         user.setAccountState(AccountState.PENDING);
 
@@ -236,8 +237,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User getUserEntityById(int id) {
+        return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User with id " + id + " is not found"));
+    }
+
+    @Override
     @Transactional
-    public void addBalance(int userId, float balance) {
+    public void addBalance(int userId, long balance) {
         Optional<User> user = userRepository.findById(userId);
 
         if(user.isEmpty()){
@@ -252,7 +258,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void subtractBalance(int userId, float balance) {
+    public void subtractBalance(int userId, long balance) {
         Optional<User> user = userRepository.findById(userId);
 
         if(user.isEmpty()){

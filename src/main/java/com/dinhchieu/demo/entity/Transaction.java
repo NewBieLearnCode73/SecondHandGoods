@@ -18,6 +18,12 @@ public class Transaction {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Column(name = "txnref")
+    private int txnref;
+
+    @Column(name = "bank_code")
+    private String bankCode;
+
     @Column(name = "fluctuation")
     private Double fluctuation;
 
