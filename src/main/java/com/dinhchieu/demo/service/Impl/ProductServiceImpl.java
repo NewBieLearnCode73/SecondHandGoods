@@ -108,6 +108,28 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public PaginationResponseDTO<ProductDetailResponseDTO> showAllProductsByType(int typeId, int pageNo, int pageSize, String sortBy) {
+
+            Type existingType = typeRepository.findById(typeId)
+                    .orElseThrow(() -> new TypeNotFoundException("Type with ID " + typeId + " not found!"));
+
+            Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+
+            Page<Product> pageResult = productRepository.findAllByTypeId(typeId, paging);
+
+            List<ProductDetailResponseDTO> productDetailResponseDTOList = pageResult.stream().map(this::mapToProductDetailResponseDTO).toList();
+
+            PaginationResponseDTO<ProductDetailResponseDTO> response = new PaginationResponseDTO<>();
+            response.setItems(productDetailResponseDTOList);
+            response.setCurrentPage(pageResult.getNumber());
+            response.setTotalItems(pageResult.getTotalElements());
+            response.setTotalPages(pageResult.getTotalPages());
+            response.setPageSize(pageResult.getSize());
+
+            return response;
+    }
+
+    @Override
     public Optional<ProductDetailResponseDTO> getProductById(int id) throws Exception {
         if(!productRepository.existsById(id)){
             throw new ProductNotFoundException("Can't find product with id " + id);

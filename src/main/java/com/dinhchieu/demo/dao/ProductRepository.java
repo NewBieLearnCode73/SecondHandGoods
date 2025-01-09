@@ -10,4 +10,5 @@ import org.springframework.stereotype.Service;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Integer> {
     Page<Product> findAllByOwnerId(int userId, Pageable pageable);
+    Page<Product> findAllByTypeId(int typeId, Pageable pageable);
 }

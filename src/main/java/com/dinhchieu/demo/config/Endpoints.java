@@ -13,6 +13,7 @@ public class Endpoints {
             "/api/v1/payment/vn-pay-callback",
             "/api/v1/products",
             "/api/v1/products/**",
+            "/api/v1/products/type/**",
             "/api/v1/products/user/**",
             "/api/v1/followers/**",
             "/api/v1/followees/**",

@@ -36,7 +36,7 @@ This project was created to provide users with a platform to sell their pre-owne
 ## 5. How to run
 1. Clone this repository
 2. Import the project into your IDE
-3. Configure the application.properties file in the resources folder
+3. Configure the `application.properties` file in the resources folder
    - Set up your database connection and import the file `second_hand_goods.sql` into your database
    - Set up your email configuration
    - Set up your VNPay configuration
