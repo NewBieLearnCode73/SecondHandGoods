@@ -1,6 +1,7 @@
 package com.dinhchieu.demo.controller;
 
 import com.dinhchieu.demo.entity.LoginForm;
+import com.dinhchieu.demo.service.EmailService;
 import com.dinhchieu.demo.service.Impl.UserDetailService;
 import com.dinhchieu.demo.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;

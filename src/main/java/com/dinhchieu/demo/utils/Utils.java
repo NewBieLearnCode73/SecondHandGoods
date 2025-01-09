@@ -3,6 +3,7 @@ package com.dinhchieu.demo.utils;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 public class Utils {
     public static String extractParam(URL url, String param){
@@ -17,5 +18,9 @@ public class Utils {
         }
 
         return null;
+    }
+
+    public static String createRandomActivationCode(){
+        return UUID.randomUUID().toString();
     }
 }

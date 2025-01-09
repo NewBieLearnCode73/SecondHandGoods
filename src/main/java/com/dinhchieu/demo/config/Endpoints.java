@@ -6,7 +6,8 @@ public class Endpoints {
             "/api/v1/login",
             "/api/v1/users/register",
             "/api/v1/refresh-token",
-            "/api/v1/payment/vn-pay"
+            "/api/v1/payment/vn-pay",
+            "/api/v1/users/active",
     };
 
     public static final String[] PUBLIC_GET_ENDPOINTS ={
@@ -18,6 +19,16 @@ public class Endpoints {
             "/api/v1/followers/**",
             "/api/v1/followees/**",
             "/api/v1/images/**",
+            "/v3/api-docs/**",
+            "/swagger-ui/**",
+            "/swagger-ui.html"
+    };
+
+    public static final String[] SWAGGER_ENDPOINTS ={
+            "/v3/api-docs",
+            "/v3/api-docs/**",
+            "/swagger-ui/**",
+            "/swagger-ui.html"
     };
 
     //////////////////////////////////////

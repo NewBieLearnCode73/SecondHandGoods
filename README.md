@@ -15,6 +15,7 @@ This project was created to provide users with a platform to sell their pre-owne
 
 ## 3. Main features
 - User registration and login
+- User account activation via email
 - User profile management
 - CRUD operations for entities: User, Product,...
 - Security: Authentication and Authorization using JWT
@@ -38,17 +39,18 @@ This project was created to provide users with a platform to sell their pre-owne
 2. Import the project into your IDE
 3. Configure the `application.properties` file in the resources folder
    - Set up your database connection and import the file `second_hand_goods.sql` into your database
-   - Set up your email configuration
+   - Set up your email server SMTP configuration
    - Set up your VNPay configuration
 4. Run the project
 
 ---
 
 ## 6. How to use
-- After run project, access the Swagger documentation at: http://localhost:8080/swagger-ui.html
-
+- After run project, access the Swagger documentation at: http://localhost:8080/swagger-ui/index.html
+- Read the API documentation and test the APIs using Postman or any other API testing tool
 ---
 
 ## 7. Contact
-- Email: [ndchieu73@gmail.com](mailto:ndchieu73@gmail.com)
-- Github: https://github.com/NewBieLearnCode73
+- **Email**: [ndchieu73@gmail.com](mailto:ndchieu73@gmail.com)
+- **Github**: https://github.com/NewBieLearnCode73
+- **LinkkedIn**: https://www.linkedin.com/in/chieu-nguyen-12aba1345/

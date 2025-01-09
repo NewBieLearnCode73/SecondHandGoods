@@ -49,6 +49,9 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
 
          httpSecurity.authorizeHttpRequests(registry ->{
+             // Support swagger
+             registry.requestMatchers(Endpoints.SWAGGER_ENDPOINTS).permitAll();
+
             // Support for public endpoints
              registry.requestMatchers(HttpMethod.GET, Endpoints.PUBLIC_GET_ENDPOINTS).permitAll();
              registry.requestMatchers(HttpMethod.POST, Endpoints.PUBLIC_POST_ENDPOINTS).permitAll();
@@ -70,6 +73,7 @@ public class SecurityConfiguration {
              registry.requestMatchers(HttpMethod.POST, Endpoints.USER_POST_ENDPOINTS).hasRole("USER");
              registry.requestMatchers(HttpMethod.DELETE, Endpoints.USER_DELETE_ENDPOINTS).hasRole("USER");
              registry.requestMatchers(HttpMethod.PATCH, Endpoints.USER_PATCH_ENDPOINTS).hasRole("USER");
+
 
              registry.anyRequest().authenticated();
          });

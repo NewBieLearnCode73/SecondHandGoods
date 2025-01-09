@@ -13,7 +13,7 @@ public interface UserService {
     UserInformationResponseDTO getUserByUsername(String username);
     UserInformationResponseDTO getUserByEmail(String email);
     PaginationResponseDTO<UserInformationResponseDTO> getAllUsers(int pageNo, int pageSize, String sortBy, Map<String, String> filters);
-
+    void activeUser(String email, String token);
 
     UserInformationResponseDTO registerUser(UserRegisterRequestDTO userRegisterRequestDTO);
     UserInformationResponseDTO updateBasicInformationUser(int userId, UserUpdateInformRequestDTO userUpdateInformRequestDTO);

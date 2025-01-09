@@ -10,9 +10,11 @@ import com.dinhchieu.demo.entity.User;
 import com.dinhchieu.demo.handle.AccountStateNotFoundException;
 import com.dinhchieu.demo.handle.PasswordNotFoundException;
 import com.dinhchieu.demo.handle.UserNotFoundException;
+import com.dinhchieu.demo.service.EmailService;
 import com.dinhchieu.demo.service.UserService;
 import com.dinhchieu.demo.utils.AccountState;
 import com.dinhchieu.demo.utils.UserSpecification;
+import com.dinhchieu.demo.utils.Utils;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -38,6 +40,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private EmailService emailService;
 
     private UserInformationResponseDTO mapToUserInformationResponseDTO(User user){
         UserInformationResponseDTO dto = new UserInformationResponseDTO();
@@ -124,6 +129,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void activeUser(String email, String token) {
+        User user = userRepository.findUserByEmail(email);
+
+        if(user == null){
+            throw new UserNotFoundException("User with email " + email + " is not found");
+        }
+
+        if(user.getActivationCode().equals(token)){
+            user.setAccountState(AccountState.ONLINE);
+            user.setActivation(true);
+            userRepository.save(user);
+        }else{
+            throw new UserNotFoundException("Activation code is not correct");
+        }
+    }
+
+    @Override
     @Transactional
     public UserInformationResponseDTO registerUser(UserRegisterRequestDTO userRegisterRequestDTO) {
         validateUserRegisterRequest(userRegisterRequestDTO);
@@ -149,8 +171,12 @@ public class UserServiceImpl implements UserService {
         user.setBalance((float) 0);
         user.setRole(roleRepository.findRoleByRoleName("USER"));
         user.setAccountState(AccountState.PENDING);
+        // Random code
+        user.setActivationCode(Utils.createRandomActivationCode());
 
         userRepository.save(user);
+
+        emailService.sendActivationEmail(user.getEmail(), user.getActivationCode());
 
         return mapToUserInformationResponseDTO(user);
     }

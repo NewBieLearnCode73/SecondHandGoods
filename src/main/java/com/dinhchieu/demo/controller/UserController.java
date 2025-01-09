@@ -1,11 +1,9 @@
 package com.dinhchieu.demo.controller;
 
-import com.dinhchieu.demo.dto.request.AccountStateRequestDTO;
-import com.dinhchieu.demo.dto.request.UpdatePasswordRequestDTO;
-import com.dinhchieu.demo.dto.request.UserRegisterRequestDTO;
-import com.dinhchieu.demo.dto.request.UserUpdateInformRequestDTO;
+import com.dinhchieu.demo.dto.request.*;
 import com.dinhchieu.demo.dto.response.PaginationResponseDTO;
 import com.dinhchieu.demo.dto.response.UserInformationResponseDTO;
+import com.dinhchieu.demo.service.EmailService;
 import com.dinhchieu.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -48,6 +46,12 @@ public class UserController {
     @PostMapping("/api/v1/users/register")
     public ResponseEntity<?> registerUser(@RequestBody UserRegisterRequestDTO userRegisterRequestDTO) {
         return ResponseEntity.status(HttpStatus.CREATED.value()).body(userService.registerUser(userRegisterRequestDTO));
+    }
+
+    @PostMapping("/api/v1/users/active")
+    public ResponseEntity<?> activeUser(@RequestBody ActiveAccountRequestDTO activeAccountRequestDTO) {
+        userService.activeUser(activeAccountRequestDTO.getEmail(), activeAccountRequestDTO.getToken());
+        return ResponseEntity.status(HttpStatus.OK.value()).body("Active account successfully!");
     }
 
     @PatchMapping("/api/v1/users/updateProfile/{id}")
