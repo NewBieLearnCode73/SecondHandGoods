@@ -48,7 +48,12 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
 
-         httpSecurity.authorizeHttpRequests(registry ->{
+        // But jwtFilter before filterUsernamePassword
+        // Meaning default using Jwt for this application
+        httpSecurity.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+
+        httpSecurity.authorizeHttpRequests(registry ->{
              // Support swagger
              registry.requestMatchers(Endpoints.SWAGGER_ENDPOINTS).permitAll();
 
@@ -81,8 +86,6 @@ public class SecurityConfiguration {
 
 
          httpSecurity.csrf(AbstractHttpConfigurer::disable);
-
-         httpSecurity.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
          return httpSecurity.build();
     }
