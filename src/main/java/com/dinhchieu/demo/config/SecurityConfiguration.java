@@ -48,7 +48,7 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
 
-        // But jwtFilter before filterUsernamePassword
+        // Put jwtFilter before filterUsernamePassword
         // Meaning default using Jwt for this application
         httpSecurity.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
